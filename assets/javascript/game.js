@@ -2,7 +2,7 @@ var game = {
     wins: 0,
     losses: 0,
     remainingGuesses: 0,
-    wordPool: ["JACKPOT", "TILT", "BUMPER", "MULTIBALL", "LIGHTS", "QUARTERS"],
+    wordPool: ["JACKPOT", "TILT", "BUMPER", "MULTIBALL", "LIGHTS", "QUARTERS", "BONUS"],
     currentWord: '',
     rightLettersGuessed: [],
     wrongLettersGuessed: [],
@@ -12,7 +12,6 @@ var game = {
         this.isActive = true;
         this.remainingGuesses = 9;
         this.currentWord = this.wordPool[Math.floor(Math.random() * this.wordPool.length)];
-        console.log(this.currentWord);
         this.rightLettersGuessed = [];
         this.wrongLettersGuessed = [];
         this.update();
@@ -34,6 +33,10 @@ var game = {
             wordSection.appendChild(letterNode);
         }
 
+        //display remainaing guesses
+        var guesses = document.getElementById("guesses");
+        guesses.textContent = this.remainingGuesses;;
+
         //display guessed letters
         var guessSection = document.getElementById("lettersGuessed");
         guessSection.innerHTML = "";
@@ -44,6 +47,23 @@ var game = {
             letterNode.textContent = this.wrongLettersGuessed[i];
             guessSection.appendChild(letterNode);
         }
+
+        //check for win/loss
+        if (this.remainingGuesses <= 0) {
+
+            document.getElementById("losses").textContent = ++this.losses;
+            this.isActive = false;
+            alert("Game over. Press any key to continue.");
+        
+        } else if (this.hasWon()) {
+
+            document.getElementById("wins").textContent = ++this.wins;
+            this.isActive = false;
+            alert("You win! Press any key to continue.");
+        }
+
+        document.getElementById("losses").textContent = this.losses;
+        document.getElementById("wins").textContent = this.wins;
     },
 
     makeGuess: function(guessedLetter) {
@@ -58,6 +78,17 @@ var game = {
 
             this.update();
         }
+    },
+
+    hasWon: function() {
+        var letters = this.currentWord.split("");
+        for (var i = 0; i < letters.length; i++) {
+            if (!this.rightLettersGuessed.includes(letters[i])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 
