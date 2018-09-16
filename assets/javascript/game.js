@@ -10,10 +10,14 @@ var game = {
     
     initGame: function() {
         this.isActive = true;
-        this.remainingGuesses = 9;
+        this.remainingGuesses = 6;
         this.currentWord = this.wordPool[Math.floor(Math.random() * this.wordPool.length)];
         this.rightLettersGuessed = [];
         this.wrongLettersGuessed = [];
+        var letterNodes = document.getElementById("letters").getElementsByTagName("li");
+        for (var i = 0; i < letterNodes.length; i++) {
+            letterNodes[i].style.backgroundColor = "black";
+        }
         this.update();
     },
 
@@ -21,11 +25,10 @@ var game = {
         
         //clear word section
         var wordSection = document.getElementById("wordSection");
-        wordSection.innerHTML = "Current Word: ";
+        wordSection.textContent = "Current Word: ";
         
         //display word
         var letters = this.currentWord.split("");
-        console.log(letters);
         for (var i = 0; i < letters.length; i++) {
 
             var letterNode = document.createElement("span");
@@ -33,33 +36,25 @@ var game = {
             wordSection.appendChild(letterNode);
         }
 
-        //display remainaing guesses
-        var guesses = document.getElementById("guesses");
-        guesses.textContent = this.remainingGuesses;;
-
         //display guessed letters
-        var guessSection = document.getElementById("lettersGuessed");
-        guessSection.innerHTML = "";
-
+        var letterNodes = document.getElementById("letters").getElementsByTagName("li");
         for (var i = 0; i < this.wrongLettersGuessed.length; i++) {
-
-            var letterNode = document.createElement("span");
-            letterNode.textContent = this.wrongLettersGuessed[i];
-            guessSection.appendChild(letterNode);
+            letterNodes[i].style.backgroundColor = (i % 2 == 0) ? "red" : "yellow";
+            letterNodes[i].textContent = this.wrongLettersGuessed[i];
         }
 
         //check for win/loss
         if (this.remainingGuesses <= 0) {
 
             document.getElementById("losses").textContent = ++this.losses;
+            wordSection.textContent = "Game Over... Press any key to continue.";
             this.isActive = false;
-            alert("Game over. Press any key to continue.");
         
         } else if (this.hasWon()) {
 
             document.getElementById("wins").textContent = ++this.wins;
+            wordSection.textContent = "You win! Press any key to continue.";
             this.isActive = false;
-            alert("You win! Press any key to continue.");
         }
 
         document.getElementById("losses").textContent = this.losses;
